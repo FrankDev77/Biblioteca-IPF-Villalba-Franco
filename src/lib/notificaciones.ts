@@ -22,3 +22,12 @@ export async function asegurarCanalPrestamos(): Promise<void> {
     importance: Notifications.AndroidImportance.HIGH,
   });
 }
+
+export async function notificarLibroListo(titulo: string): Promise<void> {
+  await asegurarCanalPrestamos();
+  await Notifications.scheduleNotificationAsync({
+    content: { title: 'Libro listo', body: `Tu libro ${titulo} está listo para retirar` },
+    // solo channelId equivale a trigger null (inmediata) pero en el canal de préstamos
+    trigger: { channelId: CANAL_PRESTAMOS },
+  });
+}

@@ -5,10 +5,20 @@ import { Cola } from '../estructuras/Cola';
 import { Pila } from '../estructuras/Pila';
 import { useRecordatorio } from '../hooks/useRecordatorio';
 import { sumarDias } from '../lib/fechas';
-import type { Prestamo, ReservaEnEspera } from '../types';
-import type { BibliotecaContextValue, ResultadoReserva } from '../types/biblioteca';
+import type { Prestamo, ReservaEnEspera, Sesion } from '../types';
+import type {
+  BibliotecaContextValue,
+  LibroConCola,
+  ResultadoEntrega,
+  ResultadoLogin,
+  ResultadoReserva,
+} from '../types/biblioteca';
 
 export const USUARIO = 'yo';
+
+// TP: credenciales fijas para el mostrador académico
+const USUARIO_MOSTRADOR = 'biblioteca';
+const CLAVE_MOSTRADOR = 'ipf2026';
 
 const BibliotecaContext = createContext<BibliotecaContextValue | null>(null);
 
@@ -42,6 +52,10 @@ export function BibliotecaProvider({ children }: Props) {
   // la Pila y las Colas se mutan en el lugar y React no se entera; el contador fuerza el re-render (B3)
   const [, forzar] = useReducer((n: number) => n + 1, 0);
   const { programar, cancelar } = useRecordatorio();
+  // la app solo modela al alumno ('yo'); para el resto alcanza con contar cuántos ejemplares
+  // se llevaron por isbn, así ejemplaresDisponibles baja sin inventar un modelo de usuarios
+  const [prestamosExternos, setPrestamosExternos] = useState<Record<string, number>>({});
+  const [sesion, setSesion] = useState<Sesion | null>(null);
 
   const verLibro = useCallback(
     (isbn: string) => {
@@ -62,9 +76,10 @@ export function BibliotecaProvider({ children }: Props) {
       const libro = LIBROS.find((l) => l.isbn === isbn);
       if (!libro) return 0;
       const prestados = prestamos.filter((p) => p.isbn === isbn).length;
-      return Math.max(0, libro.ejemplares - prestados);
+      const externos = prestamosExternos[isbn] ?? 0;
+      return Math.max(0, libro.ejemplares - prestados - externos);
     },
-    [prestamos],
+    [prestamos, prestamosExternos],
   );
 
   const tamanioEspera = useCallback(
@@ -148,10 +163,56 @@ export function BibliotecaProvider({ children }: Props) {
     [prestamos, programar, cancelar],
   );
 
+  const librosConCola = useCallback(() => {
+    const libros: LibroConCola[] = [];
+    listasEspera.forEach((cola, isbn) => {
+      const siguiente = cola.frente();
+      const libro = LIBROS.find((l) => l.isbn === isbn);
+      if (siguiente === undefined || !libro) return;
+      libros.push({
+        isbn,
+        titulo: libro.titulo,
+        autor: libro.autor,
+        siguiente,
+        cuantosEsperan: cola.tamanio,
+      });
+    });
+    return libros;
+  }, [listasEspera]);
+
+  const entregarAlSiguiente = useCallback(
+    (isbn: string): ResultadoEntrega | null => {
+      const siguiente = listasEspera.get(isbn)?.desencolar();
+      if (siguiente === undefined) return null;
+
+      if (siguiente === USUARIO) {
+        setPrestamos((actuales) => [
+          ...actuales,
+          { isbn, desde: new Date().toISOString(), hasta: sumarDias(7), notificacionId: null },
+        ]);
+      } else {
+        setPrestamosExternos((actuales) => ({ ...actuales, [isbn]: (actuales[isbn] ?? 0) + 1 }));
+      }
+      forzar();
+      return { entregado: siguiente, siguienteSoyYo: siguiente === USUARIO };
+    },
+    [listasEspera],
+  );
+
+  const iniciarSesion = useCallback((usuario: string, clave: string): ResultadoLogin => {
+    if (usuario !== USUARIO_MOSTRADOR || clave !== CLAVE_MOSTRADOR) {
+      return { ok: false, razon: 'credenciales' };
+    }
+    setSesion({ usuario, desde: new Date().toISOString() });
+    return { ok: true };
+  }, []);
+
+  const cerrarSesion = useCallback(() => setSesion(null), []);
+
   const valor: BibliotecaContextValue = {
     prestamos,
     recientes: vistos.aArray().reverse(),
-    sesion: null,
+    sesion,
     reservar,
     devolver,
     verLibro,
@@ -161,8 +222,10 @@ export function BibliotecaProvider({ children }: Props) {
     estaPrestado,
     misReservasEnEspera,
     activarRecordatorio,
-    iniciarSesion: noop,
-    cerrarSesion: noop,
+    librosConCola,
+    entregarAlSiguiente,
+    iniciarSesion,
+    cerrarSesion,
   };
 
   return (

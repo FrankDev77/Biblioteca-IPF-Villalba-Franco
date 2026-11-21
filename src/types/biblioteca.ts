@@ -13,6 +13,18 @@ export type EstadoPermiso =
   | { tipo: 'preguntable' }
   | { tipo: 'bloqueado' };
 
+export type ResultadoLogin = { ok: true } | { ok: false; razon: 'credenciales' };
+
+export type ResultadoEntrega = { entregado: string; siguienteSoyYo: boolean };
+
+export type LibroConCola = {
+  isbn: string;
+  titulo: string;
+  autor: string;
+  siguiente: string;
+  cuantosEsperan: number;
+};
+
 export type BibliotecaContextValue = {
   prestamos: Prestamo[];
   recientes: string[];
@@ -26,6 +38,8 @@ export type BibliotecaContextValue = {
   estaPrestado: (isbn: string) => boolean;
   misReservasEnEspera: () => ReservaEnEspera[];
   activarRecordatorio: (isbn: string, activo: boolean) => Promise<void>;
-  iniciarSesion: (usuario: string) => void;
+  librosConCola: () => LibroConCola[];
+  entregarAlSiguiente: (isbn: string) => ResultadoEntrega | null;
+  iniciarSesion: (usuario: string, clave: string) => ResultadoLogin;
   cerrarSesion: () => void;
 };
