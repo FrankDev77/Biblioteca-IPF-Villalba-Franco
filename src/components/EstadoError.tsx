@@ -6,9 +6,16 @@ import { colores, espaciado, radios, tipografia } from '../constants/tema';
 type Props = {
   onReintentar: () => void;
   mensaje?: string;
+  titulo?: string;
+  textoBoton?: string;
 };
 
-export function EstadoError({ onReintentar, mensaje }: Props) {
+export function EstadoError({
+  onReintentar,
+  mensaje,
+  titulo = 'No pudimos cargar el catálogo',
+  textoBoton = 'Reintentar',
+}: Props) {
   return (
     <View style={styles.contenedor}>
       <Ionicons
@@ -19,7 +26,7 @@ export function EstadoError({ onReintentar, mensaje }: Props) {
         importantForAccessibility="no"
       />
       <Text style={styles.titulo} accessibilityRole="header">
-        No pudimos cargar el catálogo
+        {titulo}
       </Text>
       <Text style={styles.mensaje}>
         {mensaje ?? 'Revisá tu conexión e intentá de nuevo.'}
@@ -27,10 +34,10 @@ export function EstadoError({ onReintentar, mensaje }: Props) {
       <Pressable
         onPress={onReintentar}
         accessibilityRole="button"
-        accessibilityLabel="Reintentar cargar el catálogo"
+        accessibilityLabel={textoBoton}
         style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
       >
-        <Text style={styles.botonTexto}>Reintentar</Text>
+        <Text style={styles.botonTexto}>{textoBoton}</Text>
       </Pressable>
     </View>
   );
