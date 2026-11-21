@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, sombras, tipografia } from '../constants/tema';
+import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import type { Libro } from '../types';
 
 type Props = {
@@ -14,6 +15,7 @@ function textoEjemplares(cantidad: number) {
 }
 
 export function LibroCard({ libro, onPress }: Props) {
+  const styles = useEstilos(crearEstilos);
   const disponible = libro.ejemplares > 0;
   const ejemplares = textoEjemplares(libro.ejemplares);
 
@@ -43,58 +45,59 @@ export function LibroCard({ libro, onPress }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 44,
-    padding: espaciado.l,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.superficie,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colores.claro.borde,
-    ...sombras.card,
-  },
-  cardPresionada: {
-    opacity: 0.7,
-  },
-  info: {
-    flex: 1,
-    marginRight: espaciado.m,
-  },
-  titulo: {
-    ...tipografia.subtitulo,
-    color: colores.claro.texto,
-  },
-  autor: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.xs,
-  },
-  anio: {
-    ...tipografia.pie,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.xs,
-  },
-  badge: {
-    paddingHorizontal: espaciado.m,
-    paddingVertical: espaciado.xs,
-    borderRadius: radios.pill,
-  },
-  badgeDisponible: {
-    backgroundColor: colores.claro.exito,
-  },
-  badgeAgotado: {
-    backgroundColor: colores.claro.silueta,
-  },
-  badgeTexto: {
-    ...tipografia.pie,
-    fontWeight: '600',
-  },
-  badgeTextoDisponible: {
-    color: colores.claro.superficie,
-  },
-  badgeTextoAgotado: {
-    color: colores.claro.textoSuave,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    card: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 44,
+      padding: espaciado.l,
+      borderRadius: radios.m,
+      backgroundColor: paleta.superficie,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: paleta.borde,
+      ...sombras.card,
+    },
+    cardPresionada: {
+      opacity: 0.7,
+    },
+    info: {
+      flex: 1,
+      marginRight: espaciado.m,
+    },
+    titulo: {
+      ...tipografia.subtitulo,
+      color: paleta.texto,
+    },
+    autor: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.xs,
+    },
+    anio: {
+      ...tipografia.pie,
+      color: paleta.textoSuave,
+      marginTop: espaciado.xs,
+    },
+    badge: {
+      paddingHorizontal: espaciado.m,
+      paddingVertical: espaciado.xs,
+      borderRadius: radios.pill,
+    },
+    badgeDisponible: {
+      backgroundColor: paleta.exito,
+    },
+    badgeAgotado: {
+      backgroundColor: paleta.silueta,
+    },
+    badgeTexto: {
+      ...tipografia.pie,
+      fontWeight: '600',
+    },
+    badgeTextoDisponible: {
+      color: paleta.textoSobreExito,
+    },
+    badgeTextoAgotado: {
+      color: paleta.textoSuave,
+    },
+  });

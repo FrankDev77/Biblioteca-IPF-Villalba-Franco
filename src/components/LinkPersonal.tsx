@@ -1,10 +1,12 @@
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colores, espaciado, tipografia } from '../constants/tema';
+import { espaciado, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import { useBiblioteca } from '../context/BibliotecaProvider';
 
 export function LinkPersonal() {
+  const styles = useEstilos(crearEstilos);
   const { sesion } = useBiblioteca();
   const haySesion = sesion !== null;
 
@@ -22,16 +24,17 @@ export function LinkPersonal() {
   );
 }
 
-const styles = StyleSheet.create({
-  link: {
-    minHeight: 44,
-    minWidth: 44,
-    justifyContent: 'center',
-    paddingHorizontal: espaciado.l,
-  },
-  texto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    link: {
+      minHeight: 44,
+      minWidth: 44,
+      justifyContent: 'center',
+      paddingHorizontal: espaciado.l,
+    },
+    texto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+      color: paleta.primario,
+    },
+  });

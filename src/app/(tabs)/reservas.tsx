@@ -3,10 +3,12 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { EsperaCard } from '../../components/EsperaCard';
 import { EstadoVacio } from '../../components/EstadoVacio';
 import { PrestamoCard } from '../../components/PrestamoCard';
-import { colores, espaciado, tipografia } from '../../constants/tema';
+import { espaciado, tipografia, type Paleta } from '../../constants/tema';
+import { useEstilos } from '../../hooks/useEstilos';
 import { useBiblioteca } from '../../context/BibliotecaProvider';
 
 export default function ReservasScreen() {
+  const styles = useEstilos(crearEstilos);
   const { prestamos, devolver, misReservasEnEspera } = useBiblioteca();
   const enEspera = misReservasEnEspera();
 
@@ -49,31 +51,32 @@ export default function ReservasScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  vacio: {
-    flex: 1,
-    backgroundColor: colores.claro.fondo,
-  },
-  contenedor: {
-    flex: 1,
-    backgroundColor: colores.claro.fondo,
-  },
-  contenido: {
-    padding: espaciado.l,
-  },
-  seccion: {
-    ...tipografia.subtitulo,
-    color: colores.claro.texto,
-  },
-  seccionSiguiente: {
-    marginTop: espaciado.xl,
-  },
-  item: {
-    marginTop: espaciado.m,
-  },
-  sinItems: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.s,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    vacio: {
+      flex: 1,
+      backgroundColor: paleta.fondo,
+    },
+    contenedor: {
+      flex: 1,
+      backgroundColor: paleta.fondo,
+    },
+    contenido: {
+      padding: espaciado.l,
+    },
+    seccion: {
+      ...tipografia.subtitulo,
+      color: paleta.texto,
+    },
+    seccionSiguiente: {
+      marginTop: espaciado.xl,
+    },
+    item: {
+      marginTop: espaciado.m,
+    },
+    sinItems: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.s,
+    },
+  });

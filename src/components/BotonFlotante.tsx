@@ -2,7 +2,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colores, espaciado, radios, sombras, tipografia } from '../constants/tema';
+import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 
 type Props = {
   texto: string;
@@ -11,6 +13,8 @@ type Props = {
 };
 
 export function BotonFlotante({ texto, icono, onPress }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   return (
     <Pressable
       onPress={onPress}
@@ -21,7 +25,7 @@ export function BotonFlotante({ texto, icono, onPress }: Props) {
       <Ionicons
         name={icono}
         size={20}
-        color={colores.claro.primario}
+        color={paleta.primario}
         accessibilityElementsHidden
         importantForAccessibility="no"
       />
@@ -30,26 +34,27 @@ export function BotonFlotante({ texto, icono, onPress }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  boton: {
-    position: 'absolute',
-    bottom: espaciado.xxl,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: espaciado.s,
-    minHeight: 48,
-    paddingHorizontal: espaciado.xl,
-    borderRadius: radios.pill,
-    backgroundColor: colores.claro.superficie,
-    ...sombras.card,
-  },
-  botonPresionado: {
-    opacity: 0.85,
-  },
-  texto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    boton: {
+      position: 'absolute',
+      bottom: espaciado.xxl,
+      alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: espaciado.s,
+      minHeight: 48,
+      paddingHorizontal: espaciado.xl,
+      borderRadius: radios.pill,
+      backgroundColor: paleta.superficie,
+      ...sombras.card,
+    },
+    botonPresionado: {
+      opacity: 0.85,
+    },
+    texto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+      color: paleta.primario,
+    },
+  });

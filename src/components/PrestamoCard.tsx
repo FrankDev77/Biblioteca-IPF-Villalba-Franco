@@ -2,7 +2,9 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, sombras, tipografia } from '../constants/tema';
+import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 import { useBiblioteca } from '../context/BibliotecaProvider';
 import { LIBROS } from '../data/libros';
 import { usePermiso } from '../hooks/usePermiso';
@@ -15,6 +17,8 @@ type Props = {
 };
 
 export function PrestamoCard({ prestamo, onDevolver }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const libro = LIBROS.find((l) => l.isbn === prestamo.isbn);
   const titulo = libro?.titulo ?? prestamo.isbn;
   const vencimiento = estadoVencimiento(prestamo.hasta);
@@ -60,7 +64,7 @@ export function PrestamoCard({ prestamo, onDevolver }: Props) {
               void cambiarRecordatorio(activo);
             }}
             disabled={procesando}
-            trackColor={{ false: colores.claro.borde, true: colores.claro.primario }}
+            trackColor={{ false: paleta.borde, true: paleta.primario }}
             accessibilityLabel={`Recordarme el vencimiento de ${titulo}`}
           />
           <Text style={styles.recordatorioTexto}>Recordarme</Text>
@@ -83,72 +87,73 @@ export function PrestamoCard({ prestamo, onDevolver }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    padding: espaciado.l,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.superficie,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colores.claro.borde,
-    ...sombras.card,
-  },
-  titulo: {
-    ...tipografia.subtitulo,
-    color: colores.claro.texto,
-  },
-  autor: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.xs,
-  },
-  vence: {
-    ...tipografia.pie,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.s,
-  },
-  venceVencido: {
-    color: colores.claro.error,
-    fontWeight: '600',
-  },
-  vencePorVencer: {
-    color: colores.claro.alerta,
-    fontWeight: '600',
-  },
-  fila: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: espaciado.m,
-  },
-  recordatorio: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: espaciado.s,
-  },
-  recordatorioTexto: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-  },
-  boton: {
-    minHeight: 44,
-    minWidth: 44,
-    justifyContent: 'center',
-    paddingHorizontal: espaciado.l,
-    borderRadius: radios.m,
-    borderWidth: 1,
-    borderColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.7,
-  },
-  botonTexto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-    color: colores.claro.primario,
-  },
-  error: {
-    ...tipografia.pie,
-    color: colores.claro.error,
-    marginTop: espaciado.s,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    card: {
+      padding: espaciado.l,
+      borderRadius: radios.m,
+      backgroundColor: paleta.superficie,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: paleta.borde,
+      ...sombras.card,
+    },
+    titulo: {
+      ...tipografia.subtitulo,
+      color: paleta.texto,
+    },
+    autor: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.xs,
+    },
+    vence: {
+      ...tipografia.pie,
+      color: paleta.textoSuave,
+      marginTop: espaciado.s,
+    },
+    venceVencido: {
+      color: paleta.error,
+      fontWeight: '600',
+    },
+    vencePorVencer: {
+      color: paleta.alerta,
+      fontWeight: '600',
+    },
+    fila: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: espaciado.m,
+    },
+    recordatorio: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: espaciado.s,
+    },
+    recordatorioTexto: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+    },
+    boton: {
+      minHeight: 44,
+      minWidth: 44,
+      justifyContent: 'center',
+      paddingHorizontal: espaciado.l,
+      borderRadius: radios.m,
+      borderWidth: 1,
+      borderColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.7,
+    },
+    botonTexto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+      color: paleta.primario,
+    },
+    error: {
+      ...tipografia.pie,
+      color: paleta.error,
+      marginTop: espaciado.s,
+    },
+  });

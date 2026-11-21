@@ -1,12 +1,16 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, tipografia } from '../constants/tema';
+import { espaciado, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 
 type Props = {
   texto?: string;
 };
 
 export function EstadoCargando({ texto = 'Cargando catálogo…' }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   return (
     <View
       style={styles.contenedor}
@@ -15,23 +19,24 @@ export function EstadoCargando({ texto = 'Cargando catálogo…' }: Props) {
       accessibilityLabel={texto}
       accessibilityState={{ busy: true }}
     >
-      <ActivityIndicator size="large" color={colores.claro.primario} />
+      <ActivityIndicator size="large" color={paleta.primario} />
       <Text style={styles.texto}>{texto}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  texto: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.m,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    texto: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.m,
+    },
+  });

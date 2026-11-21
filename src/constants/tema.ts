@@ -11,6 +11,11 @@ export const colores = {
     alerta: '#EA580C',
     error: '#DC2626',
     silueta: '#E2E8F0',
+    textoSobrePrimario: '#FFFFFF',
+    textoSobreExito: '#FFFFFF',
+    textoSobreError: '#FFFFFF',
+    velo: '#0F172A',
+    textoSobreVelo: '#FFFFFF',
   },
   oscuro: {
     fondo: '#0B1220',
@@ -24,6 +29,12 @@ export const colores = {
     alerta: '#FB923C',
     error: '#F87171',
     silueta: '#1F2937',
+    // los primarios del modo oscuro son claros, el texto encima va oscuro para que contraste
+    textoSobrePrimario: '#0B1220',
+    textoSobreExito: '#0B1220',
+    textoSobreError: '#0B1220',
+    velo: '#000000',
+    textoSobreVelo: '#FFFFFF',
   },
 };
 

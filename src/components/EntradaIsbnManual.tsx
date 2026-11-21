@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 import { buscarEnCatalogo, esIsbnValido } from '../lib/isbn';
 
 type Props = {
@@ -10,6 +12,8 @@ type Props = {
 };
 
 export function EntradaIsbnManual({ onEncontrado, onUsarCamara }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const [texto, setTexto] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +44,7 @@ export function EntradaIsbnManual({ onEncontrado, onUsarCamara }: Props) {
           setError(null);
         }}
         placeholder="9788437604947"
-        placeholderTextColor={colores.claro.textoSuave}
+        placeholderTextColor={paleta.textoSuave}
         keyboardType="number-pad"
         maxLength={13}
         autoFocus
@@ -73,60 +77,61 @@ export function EntradaIsbnManual({ onEncontrado, onUsarCamara }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  titulo: {
-    ...tipografia.titulo,
-    color: colores.claro.texto,
-  },
-  ayuda: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.s,
-  },
-  input: {
-    ...tipografia.subtitulo,
-    minHeight: 48,
-    marginTop: espaciado.xl,
-    paddingHorizontal: espaciado.l,
-    borderRadius: radios.m,
-    borderWidth: 1,
-    borderColor: colores.claro.borde,
-    backgroundColor: colores.claro.superficie,
-    color: colores.claro.texto,
-    letterSpacing: 1,
-  },
-  error: {
-    ...tipografia.pie,
-    color: colores.claro.error,
-    marginTop: espaciado.s,
-  },
-  boton: {
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.m,
-    borderRadius: radios.m,
-  },
-  botonPrimario: {
-    marginTop: espaciado.xl,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-  },
-  botonTextoPrimario: {
-    color: colores.claro.superficie,
-  },
-  botonTextoSecundario: {
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    titulo: {
+      ...tipografia.titulo,
+      color: paleta.texto,
+    },
+    ayuda: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.s,
+    },
+    input: {
+      ...tipografia.subtitulo,
+      minHeight: 48,
+      marginTop: espaciado.xl,
+      paddingHorizontal: espaciado.l,
+      borderRadius: radios.m,
+      borderWidth: 1,
+      borderColor: paleta.borde,
+      backgroundColor: paleta.superficie,
+      color: paleta.texto,
+      letterSpacing: 1,
+    },
+    error: {
+      ...tipografia.pie,
+      color: paleta.error,
+      marginTop: espaciado.s,
+    },
+    boton: {
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.m,
+      borderRadius: radios.m,
+    },
+    botonPrimario: {
+      marginTop: espaciado.xl,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+    },
+    botonTextoPrimario: {
+      color: paleta.textoSobrePrimario,
+    },
+    botonTextoSecundario: {
+      color: paleta.primario,
+    },
+  });

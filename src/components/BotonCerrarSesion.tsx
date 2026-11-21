@@ -1,12 +1,14 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colores, espaciado, tipografia } from '../constants/tema';
+import { espaciado, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 
 type Props = {
   onPress: () => void;
 };
 
 export function BotonCerrarSesion({ onPress }: Props) {
+  const styles = useEstilos(crearEstilos);
   return (
     <Pressable
       onPress={onPress}
@@ -19,16 +21,17 @@ export function BotonCerrarSesion({ onPress }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  boton: {
-    minHeight: 44,
-    minWidth: 44,
-    justifyContent: 'center',
-    paddingHorizontal: espaciado.s,
-  },
-  texto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-    color: colores.claro.error,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    boton: {
+      minHeight: 44,
+      minWidth: 44,
+      justifyContent: 'center',
+      paddingHorizontal: espaciado.s,
+    },
+    texto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+      color: paleta.error,
+    },
+  });

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import { LIBROS } from '../data/libros';
 import type { ReservaEnEspera } from '../types';
 
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export function EsperaCard({ reserva }: Props) {
+  const styles = useEstilos(crearEstilos);
   const libro = LIBROS.find((l) => l.isbn === reserva.isbn);
 
   return (
@@ -23,31 +25,32 @@ export function EsperaCard({ reserva }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: espaciado.l,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.superficie,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colores.claro.borde,
-  },
-  titulo: {
-    ...tipografia.subtitulo,
-    flex: 1,
-    marginRight: espaciado.m,
-    color: colores.claro.texto,
-  },
-  badge: {
-    paddingHorizontal: espaciado.m,
-    paddingVertical: espaciado.xs,
-    borderRadius: radios.pill,
-    backgroundColor: colores.claro.primarioSuave,
-  },
-  badgeTexto: {
-    ...tipografia.pie,
-    fontWeight: '600',
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    card: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: espaciado.l,
+      borderRadius: radios.m,
+      backgroundColor: paleta.superficie,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: paleta.borde,
+    },
+    titulo: {
+      ...tipografia.subtitulo,
+      flex: 1,
+      marginRight: espaciado.m,
+      color: paleta.texto,
+    },
+    badge: {
+      paddingHorizontal: espaciado.m,
+      paddingVertical: espaciado.xs,
+      borderRadius: radios.pill,
+      backgroundColor: paleta.primarioSuave,
+    },
+    badgeTexto: {
+      ...tipografia.pie,
+      fontWeight: '600',
+      color: paleta.primario,
+    },
+  });

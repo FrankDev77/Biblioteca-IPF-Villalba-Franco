@@ -14,7 +14,6 @@ export default function CatalogoLayout() {
         name="index"
         options={{
           title: 'Catálogo',
-          // TODO fase 6: si hay sesion mostrar Mostrador en lugar de Personal
           headerRight: () => <LinkPersonal />,
         }}
       />

@@ -2,7 +2,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 
 type Props = {
   texto: string;
@@ -11,6 +13,8 @@ type Props = {
 };
 
 export function BotonAccion({ texto, icono, onPress }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   return (
     <Pressable
       onPress={onPress}
@@ -21,7 +25,7 @@ export function BotonAccion({ texto, icono, onPress }: Props) {
       <Ionicons
         name={icono}
         size={24}
-        color={colores.claro.superficie}
+        color={paleta.textoSobrePrimario}
         accessibilityElementsHidden
         importantForAccessibility="no"
       />
@@ -30,22 +34,23 @@ export function BotonAccion({ texto, icono, onPress }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  boton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 56,
-    gap: espaciado.s,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  texto: {
-    ...tipografia.subtitulo,
-    color: colores.claro.superficie,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    boton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 56,
+      gap: espaciado.s,
+      borderRadius: radios.m,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    texto: {
+      ...tipografia.subtitulo,
+      color: paleta.textoSobrePrimario,
+    },
+  });

@@ -5,12 +5,14 @@ import { Alert, FlatList, StyleSheet, View } from 'react-native';
 import { BotonCerrarSesion } from '../components/BotonCerrarSesion';
 import { EstadoVacio } from '../components/EstadoVacio';
 import { ItemMostrador } from '../components/ItemMostrador';
-import { colores, espaciado } from '../constants/tema';
+import { espaciado, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import { useBiblioteca } from '../context/BibliotecaProvider';
 import { notificarLibroListo } from '../lib/notificaciones';
 import type { LibroConCola } from '../types/biblioteca';
 
 export default function MostradorScreen() {
+  const styles = useEstilos(crearEstilos);
   const { sesion, librosConCola, entregarAlSiguiente, cerrarSesion } = useBiblioteca();
   const libros = librosConCola();
 
@@ -58,19 +60,21 @@ export default function MostradorScreen() {
 }
 
 function Separador() {
+  const styles = useEstilos(crearEstilos);
   return <View style={styles.separador} />;
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: colores.claro.fondo,
-  },
-  lista: {
-    flexGrow: 1,
-    padding: espaciado.l,
-  },
-  separador: {
-    height: espaciado.m,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: paleta.fondo,
+    },
+    lista: {
+      flexGrow: 1,
+      padding: espaciado.l,
+    },
+    separador: {
+      height: espaciado.m,
+    },
+  });

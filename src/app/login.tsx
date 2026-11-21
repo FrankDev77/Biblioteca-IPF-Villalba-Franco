@@ -2,10 +2,14 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 import { useBiblioteca } from '../context/BibliotecaProvider';
 
 export default function LoginScreen() {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const { iniciarSesion, sesion } = useBiblioteca();
   const [usuario, setUsuario] = useState('');
   const [clave, setClave] = useState('');
@@ -35,7 +39,7 @@ export default function LoginScreen() {
         value={usuario}
         onChangeText={setUsuario}
         placeholder="Usuario"
-        placeholderTextColor={colores.claro.textoSuave}
+        placeholderTextColor={paleta.textoSuave}
         autoCapitalize="none"
         autoCorrect={false}
         autoComplete="username"
@@ -47,7 +51,7 @@ export default function LoginScreen() {
         value={clave}
         onChangeText={setClave}
         placeholder="Clave"
-        placeholderTextColor={colores.claro.textoSuave}
+        placeholderTextColor={paleta.textoSuave}
         secureTextEntry
         autoCapitalize="none"
         autoComplete="password"
@@ -72,47 +76,48 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  titulo: {
-    ...tipografia.titulo,
-    color: colores.claro.texto,
-    marginBottom: espaciado.l,
-  },
-  input: {
-    ...tipografia.cuerpo,
-    minHeight: 48,
-    marginTop: espaciado.m,
-    paddingHorizontal: espaciado.l,
-    borderRadius: radios.m,
-    borderWidth: 1,
-    borderColor: colores.claro.borde,
-    backgroundColor: colores.claro.superficie,
-    color: colores.claro.texto,
-  },
-  boton: {
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.xl,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.subtitulo,
-    color: colores.claro.superficie,
-  },
-  error: {
-    ...tipografia.cuerpo,
-    color: colores.claro.error,
-    marginTop: espaciado.m,
-    textAlign: 'center',
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    titulo: {
+      ...tipografia.titulo,
+      color: paleta.texto,
+      marginBottom: espaciado.l,
+    },
+    input: {
+      ...tipografia.cuerpo,
+      minHeight: 48,
+      marginTop: espaciado.m,
+      paddingHorizontal: espaciado.l,
+      borderRadius: radios.m,
+      borderWidth: 1,
+      borderColor: paleta.borde,
+      backgroundColor: paleta.superficie,
+      color: paleta.texto,
+    },
+    boton: {
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.xl,
+      borderRadius: radios.m,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.subtitulo,
+      color: paleta.textoSobrePrimario,
+    },
+    error: {
+      ...tipografia.cuerpo,
+      color: paleta.error,
+      marginTop: espaciado.m,
+      textAlign: 'center',
+    },
+  });

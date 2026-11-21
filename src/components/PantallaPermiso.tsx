@@ -3,7 +3,9 @@ import { router } from 'expo-router';
 import { useEffect, useRef, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 import { usePermiso } from '../hooks/usePermiso';
 import type { Recurso } from '../types';
 import type { EstadoPermiso } from '../types/biblioteca';
@@ -55,6 +57,8 @@ type Props = {
 };
 
 export function PantallaPermiso({ recurso }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const { estado, pedir, abrirAjustes } = usePermiso(recurso);
   const concedidoYaManejado = useRef(false);
   const textos = TEXTOS[recurso];
@@ -76,7 +80,7 @@ export function PantallaPermiso({ recurso }: Props) {
       <Ionicons
         name={textos.icono}
         size={56}
-        color={colores.claro.primario}
+        color={paleta.primario}
         accessibilityElementsHidden
         importantForAccessibility="no"
       />
@@ -105,55 +109,56 @@ export function PantallaPermiso({ recurso }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  titulo: {
-    ...tipografia.titulo,
-    color: colores.claro.texto,
-    textAlign: 'center',
-    marginTop: espaciado.l,
-  },
-  mensaje: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    textAlign: 'center',
-    marginTop: espaciado.m,
-  },
-  ayuda: {
-    ...tipografia.pie,
-    color: colores.claro.alerta,
-    textAlign: 'center',
-    marginTop: espaciado.m,
-  },
-  boton: {
-    alignSelf: 'stretch',
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.m,
-    borderRadius: radios.m,
-  },
-  botonPrimario: {
-    marginTop: espaciado.xl,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-  },
-  botonTextoPrimario: {
-    color: colores.claro.superficie,
-  },
-  botonTextoSecundario: {
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    titulo: {
+      ...tipografia.titulo,
+      color: paleta.texto,
+      textAlign: 'center',
+      marginTop: espaciado.l,
+    },
+    mensaje: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      textAlign: 'center',
+      marginTop: espaciado.m,
+    },
+    ayuda: {
+      ...tipografia.pie,
+      color: paleta.alerta,
+      textAlign: 'center',
+      marginTop: espaciado.m,
+    },
+    boton: {
+      alignSelf: 'stretch',
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.m,
+      borderRadius: radios.m,
+    },
+    botonPrimario: {
+      marginTop: espaciado.xl,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+    },
+    botonTextoPrimario: {
+      color: paleta.textoSobrePrimario,
+    },
+    botonTextoSecundario: {
+      color: paleta.primario,
+    },
+  });

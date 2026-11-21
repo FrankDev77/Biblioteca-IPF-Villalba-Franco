@@ -1,9 +1,11 @@
 import { Link, usePathname } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 
 export default function NotFoundScreen() {
+  const styles = useEstilos(crearEstilos);
   const pathname = usePathname();
 
   return (
@@ -25,35 +27,36 @@ export default function NotFoundScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  titulo: {
-    ...tipografia.titulo,
-    color: colores.claro.texto,
-  },
-  detalle: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.m,
-    textAlign: 'center',
-  },
-  ruta: {
-    color: colores.claro.texto,
-    fontFamily: 'monospace',
-  },
-  link: {
-    ...tipografia.subtitulo,
-    color: colores.claro.primario,
-    marginTop: espaciado.xl,
-    minHeight: 44,
-    paddingHorizontal: espaciado.l,
-    paddingVertical: espaciado.m,
-    borderRadius: radios.m,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    titulo: {
+      ...tipografia.titulo,
+      color: paleta.texto,
+    },
+    detalle: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.m,
+      textAlign: 'center',
+    },
+    ruta: {
+      color: paleta.texto,
+      fontFamily: 'monospace',
+    },
+    link: {
+      ...tipografia.subtitulo,
+      color: paleta.primario,
+      marginTop: espaciado.xl,
+      minHeight: 44,
+      paddingHorizontal: espaciado.l,
+      paddingVertical: espaciado.m,
+      borderRadius: radios.m,
+    },
+  });

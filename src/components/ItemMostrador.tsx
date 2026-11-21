@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, sombras, tipografia } from '../constants/tema';
+import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import type { LibroConCola } from '../types/biblioteca';
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export function ItemMostrador({ libro, onEntregar }: Props) {
+  const styles = useEstilos(crearEstilos);
   return (
     <View style={styles.card}>
       <Text style={styles.titulo}>{libro.titulo}</Text>
@@ -29,47 +31,48 @@ export function ItemMostrador({ libro, onEntregar }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    padding: espaciado.l,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.superficie,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colores.claro.borde,
-    ...sombras.card,
-  },
-  titulo: {
-    ...tipografia.subtitulo,
-    color: colores.claro.texto,
-  },
-  autor: {
-    ...tipografia.cuerpo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.xs,
-  },
-  fila: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: espaciado.m,
-  },
-  dato: {
-    ...tipografia.cuerpo,
-    color: colores.claro.texto,
-  },
-  boton: {
-    minHeight: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.m,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-    color: colores.claro.superficie,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    card: {
+      padding: espaciado.l,
+      borderRadius: radios.m,
+      backgroundColor: paleta.superficie,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: paleta.borde,
+      ...sombras.card,
+    },
+    titulo: {
+      ...tipografia.subtitulo,
+      color: paleta.texto,
+    },
+    autor: {
+      ...tipografia.cuerpo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.xs,
+    },
+    fila: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: espaciado.m,
+    },
+    dato: {
+      ...tipografia.cuerpo,
+      color: paleta.texto,
+    },
+    boton: {
+      minHeight: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.m,
+      borderRadius: radios.m,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+      color: paleta.textoSobrePrimario,
+    },
+  });

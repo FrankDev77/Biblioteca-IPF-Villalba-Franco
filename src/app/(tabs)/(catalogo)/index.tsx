@@ -7,11 +7,13 @@ import { EstadoError } from '../../../components/EstadoError';
 import { EstadoVacio } from '../../../components/EstadoVacio';
 import { LibroCard } from '../../../components/LibroCard';
 import { VistosRecientes } from '../../../components/VistosRecientes';
-import { colores, espaciado } from '../../../constants/tema';
+import { espaciado, type Paleta } from '../../../constants/tema';
+import { useEstilos } from '../../../hooks/useEstilos';
 import { useBiblioteca } from '../../../context/BibliotecaProvider';
 import { useLibros } from '../../../hooks/useLibros';
 
 export default function CatalogoScreen() {
+  const styles = useEstilos(crearEstilos);
   const { libros, cargando, error, reintentar } = useLibros();
   const { recientes } = useBiblioteca();
 
@@ -51,26 +53,28 @@ export default function CatalogoScreen() {
 }
 
 function Separador() {
+  const styles = useEstilos(crearEstilos);
   return <View style={styles.separador} />;
 }
 
-const styles = StyleSheet.create({
-  lista: {
-    flex: 1,
-    backgroundColor: colores.claro.fondo,
-  },
-  contenido: {
-    flexGrow: 1,
-    padding: espaciado.l,
-  },
-  header: {
-    marginBottom: espaciado.l,
-  },
-  acciones: {
-    flexDirection: 'row',
-    gap: espaciado.m,
-  },
-  separador: {
-    height: espaciado.m,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    lista: {
+      flex: 1,
+      backgroundColor: paleta.fondo,
+    },
+    contenido: {
+      flexGrow: 1,
+      padding: espaciado.l,
+    },
+    header: {
+      marginBottom: espaciado.l,
+    },
+    acciones: {
+      flexDirection: 'row',
+      gap: espaciado.m,
+    },
+    separador: {
+      height: espaciado.m,
+    },
+  });

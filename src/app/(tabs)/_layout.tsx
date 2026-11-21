@@ -1,14 +1,18 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
-import { colores } from '../../constants/tema';
+import { useTema } from '../../hooks/useTema';
 
 export default function TabsLayout() {
+  const { paleta } = useTema();
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colores.claro.primario,
-        tabBarInactiveTintColor: colores.claro.textoSuave,
+        tabBarActiveTintColor: paleta.primario,
+        tabBarInactiveTintColor: paleta.textoSuave,
+        tabBarStyle: { backgroundColor: paleta.superficie, borderTopColor: paleta.borde },
+        headerStyle: { backgroundColor: paleta.superficie },
+        headerTintColor: paleta.texto,
       }}
     >
       <Tabs.Screen
@@ -19,7 +23,7 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarAccessibilityLabel: 'Catálogo',
           tabBarIcon: ({ focused, size }) => (
-            <Ionicons name="library" color={focused ? colores.claro.primario : colores.claro.textoSuave} size={size} />
+            <Ionicons name="library" color={focused ? paleta.primario : paleta.textoSuave} size={size} />
           ),
         }}
       />
@@ -29,7 +33,7 @@ export default function TabsLayout() {
           title: 'Mis reservas',
           tabBarAccessibilityLabel: 'Mis reservas',
           tabBarIcon: ({ focused, size }) => (
-            <Ionicons name="bookmark" color={focused ? colores.claro.primario : colores.claro.textoSuave} size={size} />
+            <Ionicons name="bookmark" color={focused ? paleta.primario : paleta.textoSuave} size={size} />
           ),
         }}
       />

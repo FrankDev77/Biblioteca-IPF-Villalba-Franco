@@ -4,7 +4,9 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { EstadoError } from '../../components/EstadoError';
-import { colores, espaciado, radios, tipografia } from '../../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../../constants/tema';
+import { useEstilos } from '../../hooks/useEstilos';
+import { useTema } from '../../hooks/useTema';
 import { useBiblioteca } from '../../context/BibliotecaProvider';
 import { LIBROS } from '../../data/libros';
 import { formatearFecha } from '../../lib/fechas';
@@ -17,6 +19,8 @@ type Aviso = {
 };
 
 export default function ReservarScreen() {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const { isbn } = useLocalSearchParams<{ isbn: string }>();
   const { reservar, miPosicion } = useBiblioteca();
   const [resultado, setResultado] = useState<ResultadoReserva | null>(null);
@@ -53,12 +57,12 @@ export default function ReservarScreen() {
       resultado.tipo === 'prestamo'
         ? {
             icono: 'checkmark-circle',
-            color: colores.claro.exito,
+            color: paleta.exito,
             texto: `¡Listo! Te prestamos ${libro.titulo} hasta el ${formatearFecha(resultado.hasta)}.`,
           }
         : {
             icono: 'time-outline',
-            color: colores.claro.primario,
+            color: paleta.primario,
             texto: `Sin ejemplares. Estás en posición ${resultado.posicion} de la lista de espera.`,
           };
   } else {
@@ -66,12 +70,12 @@ export default function ReservarScreen() {
       resultado.razon === 'ya-prestado'
         ? {
             icono: 'alert-circle',
-            color: colores.claro.alerta,
+            color: paleta.alerta,
             texto: 'Ya tenés este libro prestado.',
           }
         : {
             icono: 'alert-circle',
-            color: colores.claro.alerta,
+            color: paleta.alerta,
             texto: `Ya estás en la lista de espera (posición ${miPosicion(isbn) ?? '-'}).`,
           };
   }
@@ -109,43 +113,44 @@ export default function ReservarScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: espaciado.xl,
-    backgroundColor: colores.claro.fondo,
-  },
-  texto: {
-    ...tipografia.subtitulo,
-    color: colores.claro.texto,
-    textAlign: 'center',
-    marginTop: espaciado.l,
-  },
-  boton: {
-    alignSelf: 'stretch',
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.m,
-    borderRadius: radios.m,
-  },
-  botonPrimario: {
-    marginTop: espaciado.xl,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.cuerpo,
-    fontWeight: '600',
-  },
-  botonTextoPrimario: {
-    color: colores.claro.superficie,
-  },
-  botonTextoSecundario: {
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: espaciado.xl,
+      backgroundColor: paleta.fondo,
+    },
+    texto: {
+      ...tipografia.subtitulo,
+      color: paleta.texto,
+      textAlign: 'center',
+      marginTop: espaciado.l,
+    },
+    boton: {
+      alignSelf: 'stretch',
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.m,
+      borderRadius: radios.m,
+    },
+    botonPrimario: {
+      marginTop: espaciado.xl,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.cuerpo,
+      fontWeight: '600',
+    },
+    botonTextoPrimario: {
+      color: paleta.textoSobrePrimario,
+    },
+    botonTextoSecundario: {
+      color: paleta.primario,
+    },
+  });

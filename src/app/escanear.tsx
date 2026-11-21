@@ -8,11 +8,13 @@ import { EntradaIsbnManual } from '../components/EntradaIsbnManual';
 import { EstadoCargando } from '../components/EstadoCargando';
 import { EstadoError } from '../components/EstadoError';
 import { MarcoEscaner } from '../components/MarcoEscaner';
-import { colores } from '../constants/tema';
+import { type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import { usePermiso } from '../hooks/usePermiso';
 import { buscarEnCatalogo } from '../lib/isbn';
 
 export default function EscanearScreen() {
+  const styles = useEstilos(crearEstilos);
   const { manual } = useLocalSearchParams<{ manual?: string }>();
   const enManual = manual === '1';
   const { estado } = usePermiso('camara');
@@ -106,13 +108,14 @@ export default function EscanearScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    backgroundColor: colores.claro.fondo,
-  },
-  camara: {
-    flex: 1,
-    backgroundColor: colores.claro.texto,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      backgroundColor: paleta.fondo,
+    },
+    camara: {
+      flex: 1,
+      backgroundColor: paleta.velo,
+    },
+  });

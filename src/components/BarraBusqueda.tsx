@@ -1,7 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import { colores, espaciado, radios, tipografia } from '../constants/tema';
+import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
+import { useTema } from '../hooks/useTema';
 
 type Props = {
   value: string;
@@ -9,12 +11,14 @@ type Props = {
 };
 
 export function BarraBusqueda({ value, onChangeText }: Props) {
+  const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   return (
     <View style={styles.contenedor}>
       <Ionicons
         name="search"
         size={20}
-        color={colores.claro.textoSuave}
+        color={paleta.textoSuave}
         accessibilityElementsHidden
         importantForAccessibility="no"
       />
@@ -23,7 +27,7 @@ export function BarraBusqueda({ value, onChangeText }: Props) {
         value={value}
         onChangeText={onChangeText}
         placeholder="Buscar por título o autor"
-        placeholderTextColor={colores.claro.textoSuave}
+        placeholderTextColor={paleta.textoSuave}
         accessibilityLabel="Buscar por título o autor"
         autoCorrect={false}
         autoCapitalize="none"
@@ -34,22 +38,23 @@ export function BarraBusqueda({ value, onChangeText }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 44,
-    paddingHorizontal: espaciado.m,
-    borderRadius: radios.m,
-    borderWidth: 1,
-    borderColor: colores.claro.borde,
-    backgroundColor: colores.claro.superficie,
-  },
-  input: {
-    ...tipografia.cuerpo,
-    flex: 1,
-    minHeight: 44,
-    marginLeft: espaciado.s,
-    color: colores.claro.texto,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 44,
+      paddingHorizontal: espaciado.m,
+      borderRadius: radios.m,
+      borderWidth: 1,
+      borderColor: paleta.borde,
+      backgroundColor: paleta.superficie,
+    },
+    input: {
+      ...tipografia.cuerpo,
+      flex: 1,
+      minHeight: 44,
+      marginLeft: espaciado.s,
+      color: paleta.texto,
+    },
+  });

@@ -2,7 +2,8 @@ import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colores, espaciado, radios, sombras, tipografia } from '../constants/tema';
+import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
+import { useEstilos } from '../hooks/useEstilos';
 import { useBiblioteca } from '../context/BibliotecaProvider';
 import { useLibroPorIsbn } from '../hooks/useLibroPorIsbn';
 import { EstadoCargando } from './EstadoCargando';
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function DetalleLibro({ isbn }: Props) {
+  const styles = useEstilos(crearEstilos);
   const { libro, validando, error, reintentar } = useLibroPorIsbn(isbn);
   const { verLibro, ejemplaresDisponibles, tamanioEspera, estaPrestado, miPosicion } =
     useBiblioteca();
@@ -112,77 +114,78 @@ export function DetalleLibro({ isbn }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
-    padding: espaciado.l,
-    backgroundColor: colores.claro.fondo,
-  },
-  card: {
-    padding: espaciado.xl,
-    borderRadius: radios.l,
-    backgroundColor: colores.claro.superficie,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colores.claro.borde,
-    ...sombras.card,
-  },
-  titulo: {
-    ...tipografia.titulo,
-    color: colores.claro.texto,
-  },
-  autor: {
-    ...tipografia.subtitulo,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.xs,
-    marginBottom: espaciado.l,
-  },
-  dato: {
-    ...tipografia.cuerpo,
-    color: colores.claro.texto,
-    marginTop: espaciado.s,
-  },
-  isbn: {
-    ...tipografia.pie,
-    color: colores.claro.textoSuave,
-    marginTop: espaciado.l,
-  },
-  boton: {
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.xl,
-    paddingHorizontal: espaciado.l,
-    borderRadius: radios.m,
-    backgroundColor: colores.claro.primario,
-  },
-  botonPresionado: {
-    opacity: 0.8,
-  },
-  botonTexto: {
-    ...tipografia.subtitulo,
-    color: colores.claro.superficie,
-  },
-  badge: {
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: espaciado.xl,
-    paddingHorizontal: espaciado.l,
-    borderRadius: radios.m,
-  },
-  badgePrestado: {
-    backgroundColor: colores.claro.silueta,
-  },
-  badgeEspera: {
-    backgroundColor: colores.claro.primarioSuave,
-  },
-  badgeTexto: {
-    ...tipografia.subtitulo,
-  },
-  badgeTextoPrestado: {
-    color: colores.claro.texto,
-  },
-  badgeTextoEspera: {
-    color: colores.claro.primario,
-  },
-});
+const crearEstilos = (paleta: Paleta) =>
+  StyleSheet.create({
+    contenedor: {
+      flex: 1,
+      padding: espaciado.l,
+      backgroundColor: paleta.fondo,
+    },
+    card: {
+      padding: espaciado.xl,
+      borderRadius: radios.l,
+      backgroundColor: paleta.superficie,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: paleta.borde,
+      ...sombras.card,
+    },
+    titulo: {
+      ...tipografia.titulo,
+      color: paleta.texto,
+    },
+    autor: {
+      ...tipografia.subtitulo,
+      color: paleta.textoSuave,
+      marginTop: espaciado.xs,
+      marginBottom: espaciado.l,
+    },
+    dato: {
+      ...tipografia.cuerpo,
+      color: paleta.texto,
+      marginTop: espaciado.s,
+    },
+    isbn: {
+      ...tipografia.pie,
+      color: paleta.textoSuave,
+      marginTop: espaciado.l,
+    },
+    boton: {
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.xl,
+      paddingHorizontal: espaciado.l,
+      borderRadius: radios.m,
+      backgroundColor: paleta.primario,
+    },
+    botonPresionado: {
+      opacity: 0.8,
+    },
+    botonTexto: {
+      ...tipografia.subtitulo,
+      color: paleta.textoSobrePrimario,
+    },
+    badge: {
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: espaciado.xl,
+      paddingHorizontal: espaciado.l,
+      borderRadius: radios.m,
+    },
+    badgePrestado: {
+      backgroundColor: paleta.silueta,
+    },
+    badgeEspera: {
+      backgroundColor: paleta.primarioSuave,
+    },
+    badgeTexto: {
+      ...tipografia.subtitulo,
+    },
+    badgeTextoPrestado: {
+      color: paleta.texto,
+    },
+    badgeTextoEspera: {
+      color: paleta.primario,
+    },
+  });
