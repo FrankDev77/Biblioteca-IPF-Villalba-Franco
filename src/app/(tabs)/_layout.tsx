@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colores } from '../../constants/tema';
+import { colores, espaciado, tipografia } from '../../constants/tema';
 
 export default function TabsLayout() {
   return (
@@ -18,6 +19,18 @@ export default function TabsLayout() {
           tabBarAccessibilityLabel: 'Catálogo',
           tabBarIcon: ({ focused, size }) => (
             <Ionicons name="library" color={focused ? colores.claro.primario : colores.claro.textoSuave} size={size} />
+          ),
+          // TODO fase 6: si hay sesion mostrar Mostrador en lugar de Personal
+          headerRight: () => (
+            <Link href="/login" asChild>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Ingreso del personal"
+                style={styles.linkPersonal}
+              >
+                <Text style={styles.linkPersonalTexto}>Personal</Text>
+              </Pressable>
+            </Link>
           ),
         }}
       />
@@ -38,3 +51,17 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  linkPersonal: {
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: 'center',
+    paddingHorizontal: espaciado.l,
+  },
+  linkPersonalTexto: {
+    ...tipografia.cuerpo,
+    fontWeight: '600',
+    color: colores.claro.primario,
+  },
+});
