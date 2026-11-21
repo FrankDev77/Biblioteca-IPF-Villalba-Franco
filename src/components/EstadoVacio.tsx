@@ -3,7 +3,11 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { colores, espaciado, tipografia } from '../constants/tema';
 
-export function EstadoVacio() {
+type Props = {
+  mensaje?: string;
+};
+
+export function EstadoVacio({ mensaje = 'No hay libros para mostrar' }: Props) {
   return (
     <View style={styles.contenedor}>
       <Ionicons
@@ -13,7 +17,7 @@ export function EstadoVacio() {
         accessibilityElementsHidden
         importantForAccessibility="no"
       />
-      <Text style={styles.texto}>No hay libros para mostrar</Text>
+      <Text style={styles.texto}>{mensaje}</Text>
     </View>
   );
 }

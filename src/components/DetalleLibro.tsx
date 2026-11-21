@@ -14,7 +14,8 @@ type Props = {
 
 export function DetalleLibro({ isbn }: Props) {
   const { libro, validando, error, reintentar } = useLibroPorIsbn(isbn);
-  const { verLibro, tamanioEspera } = useBiblioteca();
+  const { verLibro, ejemplaresDisponibles, tamanioEspera, estaPrestado, miPosicion } =
+    useBiblioteca();
 
   useEffect(() => {
     if (libro) verLibro(isbn);
@@ -57,7 +58,39 @@ export function DetalleLibro({ isbn }: Props) {
     );
   }
 
+  const disponibles = ejemplaresDisponibles(isbn);
   const enEspera = tamanioEspera(isbn);
+  const posicion = miPosicion(isbn);
+  const prestado = estaPrestado(isbn);
+
+  let accion;
+  if (prestado) {
+    accion = (
+      <View style={[styles.badge, styles.badgePrestado]}>
+        <Text style={[styles.badgeTexto, styles.badgeTextoPrestado]}>Ya lo tenés prestado</Text>
+      </View>
+    );
+  } else if (posicion !== null) {
+    accion = (
+      <View style={[styles.badge, styles.badgeEspera]}>
+        <Text style={[styles.badgeTexto, styles.badgeTextoEspera]}>
+          En espera · posición {posicion}
+        </Text>
+      </View>
+    );
+  } else {
+    const textoBoton = disponibles > 0 ? 'Reservar' : 'Anotarme en la lista de espera';
+    accion = (
+      <Pressable
+        onPress={() => router.push({ pathname: '/reservar/[isbn]', params: { isbn } })}
+        accessibilityRole="button"
+        accessibilityLabel={`${textoBoton}: ${libro.titulo}`}
+        style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
+      >
+        <Text style={styles.botonTexto}>{textoBoton}</Text>
+      </Pressable>
+    );
+  }
 
   return (
     <View style={styles.contenedor}>
@@ -68,18 +101,13 @@ export function DetalleLibro({ isbn }: Props) {
         </Text>
         <Text style={styles.autor}>{libro.autor}</Text>
         <Text style={styles.dato}>Año: {libro.anio}</Text>
-        <Text style={styles.dato}>Ejemplares disponibles: {libro.ejemplares}</Text>
-        <Text style={styles.dato}>Personas en lista de espera: {enEspera}</Text>
+        <Text style={styles.dato}>Ejemplares disponibles: {disponibles}</Text>
+        <Text style={styles.dato}>
+          Lista de espera: {enEspera} {enEspera === 1 ? 'persona' : 'personas'}
+        </Text>
         <Text style={styles.isbn}>ISBN {libro.isbn}</Text>
       </View>
-      <Pressable
-        onPress={() => router.push({ pathname: '/reservar/[isbn]', params: { isbn } })}
-        accessibilityRole="button"
-        accessibilityLabel={`Reservar ${libro.titulo}`}
-        style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
-      >
-        <Text style={styles.botonTexto}>Reservar</Text>
-      </Pressable>
+      {accion}
     </View>
   );
 }
@@ -123,6 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: espaciado.xl,
+    paddingHorizontal: espaciado.l,
     borderRadius: radios.m,
     backgroundColor: colores.claro.primario,
   },
@@ -132,5 +161,28 @@ const styles = StyleSheet.create({
   botonTexto: {
     ...tipografia.subtitulo,
     color: colores.claro.superficie,
+  },
+  badge: {
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: espaciado.xl,
+    paddingHorizontal: espaciado.l,
+    borderRadius: radios.m,
+  },
+  badgePrestado: {
+    backgroundColor: colores.claro.silueta,
+  },
+  badgeEspera: {
+    backgroundColor: colores.claro.primarioSuave,
+  },
+  badgeTexto: {
+    ...tipografia.subtitulo,
+  },
+  badgeTextoPrestado: {
+    color: colores.claro.texto,
+  },
+  badgeTextoEspera: {
+    color: colores.claro.primario,
   },
 });
