@@ -11,11 +11,14 @@ export default function NotFoundScreen() {
       <Text style={styles.titulo} accessibilityRole="header">
         Página no encontrada
       </Text>
-      <Text style={styles.detalle}>No existe la ruta:</Text>
-      <Text style={styles.ruta} selectable>
-        {pathname}
+      <Text style={styles.detalle}>
+        No encontramos la página{' '}
+        <Text style={styles.ruta} selectable>
+          {pathname}
+        </Text>
+        . ¿Querés ir al catálogo?
       </Text>
-      <Link href="/" style={styles.link} accessibilityRole="link">
+      <Link href="/" replace style={styles.link} accessibilityRole="link">
         Ir al catálogo
       </Link>
     </View>
@@ -38,12 +41,11 @@ const styles = StyleSheet.create({
     ...tipografia.cuerpo,
     color: colores.claro.textoSuave,
     marginTop: espaciado.m,
+    textAlign: 'center',
   },
   ruta: {
-    ...tipografia.cuerpo,
     color: colores.claro.texto,
     fontFamily: 'monospace',
-    marginTop: espaciado.xs,
   },
   link: {
     ...tipografia.subtitulo,
