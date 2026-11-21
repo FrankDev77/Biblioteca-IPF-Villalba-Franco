@@ -2,17 +2,21 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { colores, espaciado, tipografia } from '../constants/tema';
 
-export function EstadoCargando() {
+type Props = {
+  texto?: string;
+};
+
+export function EstadoCargando({ texto = 'Cargando catálogo…' }: Props) {
   return (
     <View
       style={styles.contenedor}
       accessible
       accessibilityRole="progressbar"
-      accessibilityLabel="Cargando catálogo"
+      accessibilityLabel={texto}
       accessibilityState={{ busy: true }}
     >
       <ActivityIndicator size="large" color={colores.claro.primario} />
-      <Text style={styles.texto}>Cargando catálogo…</Text>
+      <Text style={styles.texto}>{texto}</Text>
     </View>
   );
 }
