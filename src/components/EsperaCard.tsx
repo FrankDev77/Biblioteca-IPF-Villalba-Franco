@@ -4,6 +4,7 @@ import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
 import { LIBROS } from '../data/libros';
 import type { ReservaEnEspera } from '../types';
+import { PortadaLibro } from './PortadaLibro';
 
 type Props = {
   reserva: ReservaEnEspera;
@@ -15,6 +16,7 @@ export function EsperaCard({ reserva }: Props) {
 
   return (
     <View style={styles.card}>
+      <PortadaLibro isbn={reserva.isbn} size="chica" titulo={libro?.titulo} style={styles.portada} />
       <Text style={styles.titulo} numberOfLines={2}>
         {libro?.titulo ?? reserva.isbn}
       </Text>
@@ -35,6 +37,9 @@ const crearEstilos = (paleta: Paleta) =>
       backgroundColor: paleta.superficie,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: paleta.borde,
+    },
+    portada: {
+      marginRight: espaciado.m,
     },
     titulo: {
       ...tipografia.subtitulo,

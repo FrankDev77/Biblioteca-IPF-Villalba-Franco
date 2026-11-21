@@ -9,7 +9,9 @@ import { useBiblioteca } from '../context/BibliotecaProvider';
 import { LIBROS } from '../data/libros';
 import { usePermiso } from '../hooks/usePermiso';
 import { estadoVencimiento, formatearFecha } from '../lib/fechas';
+import * as haptica from '../lib/haptica';
 import type { Prestamo } from '../types';
+import { PortadaLibro } from './PortadaLibro';
 
 type Props = {
   prestamo: Prestamo;
@@ -45,17 +47,22 @@ export function PrestamoCard({ prestamo, onDevolver }: Props) {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.titulo}>{titulo}</Text>
-      {libro ? <Text style={styles.autor}>{libro.autor}</Text> : null}
-      <Text
-        style={[
-          styles.vence,
-          vencimiento === 'vencido' && styles.venceVencido,
-          vencimiento === 'por-vencer' && styles.vencePorVencer,
-        ]}
-      >
-        {vencimiento === 'vencido' ? 'Venció el' : 'Vence el'} {formatearFecha(prestamo.hasta)}
-      </Text>
+      <View style={styles.cabecera}>
+        <PortadaLibro isbn={prestamo.isbn} size="chica" titulo={titulo} style={styles.portada} />
+        <View style={styles.cabeceraTexto}>
+          <Text style={styles.titulo}>{titulo}</Text>
+          {libro ? <Text style={styles.autor}>{libro.autor}</Text> : null}
+          <Text
+            style={[
+              styles.vence,
+              vencimiento === 'vencido' && styles.venceVencido,
+              vencimiento === 'por-vencer' && styles.vencePorVencer,
+            ]}
+          >
+            {vencimiento === 'vencido' ? 'Venció el' : 'Vence el'} {formatearFecha(prestamo.hasta)}
+          </Text>
+        </View>
+      </View>
       <View style={styles.fila}>
         <View style={styles.recordatorio}>
           <Switch
@@ -70,7 +77,10 @@ export function PrestamoCard({ prestamo, onDevolver }: Props) {
           <Text style={styles.recordatorioTexto}>Recordarme</Text>
         </View>
         <Pressable
-          onPress={() => onDevolver(prestamo.isbn)}
+          onPress={() => {
+            void haptica.impactoLigero();
+            onDevolver(prestamo.isbn);
+          }}
           accessibilityRole="button"
           accessibilityLabel={`Devolver ${titulo}`}
           style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
@@ -96,6 +106,16 @@ const crearEstilos = (paleta: Paleta) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: paleta.borde,
       ...sombras.card,
+    },
+    cabecera: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    portada: {
+      marginRight: espaciado.m,
+    },
+    cabeceraTexto: {
+      flex: 1,
     },
     titulo: {
       ...tipografia.subtitulo,

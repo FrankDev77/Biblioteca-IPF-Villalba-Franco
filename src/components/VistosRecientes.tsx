@@ -5,6 +5,7 @@ import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
 import { LIBROS } from '../data/libros';
 import type { Libro } from '../types';
+import { PortadaLibro } from './PortadaLibro';
 
 type Props = {
   recientes: string[];
@@ -37,7 +38,8 @@ export function VistosRecientes({ recientes }: Props) {
             accessibilityLabel={`Ver ${libro.titulo}`}
             style={({ pressed }) => [styles.chip, pressed && styles.chipPresionado]}
           >
-            <Text style={styles.chipTexto} numberOfLines={1}>
+            <PortadaLibro isbn={libro.isbn} size="mediana" titulo={libro.titulo} />
+            <Text style={styles.chipTexto} numberOfLines={2}>
               {libro.titulo}
             </Text>
           </Pressable>
@@ -62,17 +64,19 @@ const crearEstilos = (paleta: Paleta) =>
       gap: espaciado.s,
     },
     chip: {
-      minHeight: 44,
-      justifyContent: 'center',
-      paddingHorizontal: espaciado.l,
-      borderRadius: radios.pill,
+      width: 96,
+      alignItems: 'center',
+      padding: espaciado.s,
+      gap: espaciado.s,
+      borderRadius: radios.m,
       backgroundColor: paleta.primarioSuave,
     },
     chipPresionado: {
       opacity: 0.7,
     },
     chipTexto: {
-      ...tipografia.cuerpo,
+      ...tipografia.pie,
+      textAlign: 'center',
       fontWeight: '600',
       color: paleta.primario,
     },

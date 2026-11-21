@@ -1,6 +1,6 @@
 import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { espaciado, radios, sombras, tipografia, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
@@ -8,6 +8,7 @@ import { useBiblioteca } from '../context/BibliotecaProvider';
 import { useLibroPorIsbn } from '../hooks/useLibroPorIsbn';
 import { EstadoCargando } from './EstadoCargando';
 import { EstadoError } from './EstadoError';
+import { PortadaLibro } from './PortadaLibro';
 
 type Props = {
   isbn: string;
@@ -95,8 +96,9 @@ export function DetalleLibro({ isbn }: Props) {
   }
 
   return (
-    <View style={styles.contenedor}>
+    <ScrollView style={styles.contenedor} contentContainerStyle={styles.contenido}>
       <Stack.Screen options={{ title: libro.titulo }} />
+      <PortadaLibro isbn={libro.isbn} size="grande" titulo={libro.titulo} style={styles.portada} />
       <View style={styles.card}>
         <Text style={styles.titulo} accessibilityRole="header">
           {libro.titulo}
@@ -110,7 +112,7 @@ export function DetalleLibro({ isbn }: Props) {
         <Text style={styles.isbn}>ISBN {libro.isbn}</Text>
       </View>
       {accion}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -118,8 +120,14 @@ const crearEstilos = (paleta: Paleta) =>
   StyleSheet.create({
     contenedor: {
       flex: 1,
-      padding: espaciado.l,
       backgroundColor: paleta.fondo,
+    },
+    contenido: {
+      padding: espaciado.l,
+    },
+    portada: {
+      alignSelf: 'center',
+      marginBottom: espaciado.l,
     },
     card: {
       padding: espaciado.xl,
