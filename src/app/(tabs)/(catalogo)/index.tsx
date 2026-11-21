@@ -1,24 +1,27 @@
 import { router } from 'expo-router';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
 import { BotonAccion } from '../../../components/BotonAccion';
-import { EstadoCargando } from '../../../components/EstadoCargando';
 import { EstadoError } from '../../../components/EstadoError';
 import { EstadoVacio } from '../../../components/EstadoVacio';
+import { EsqueletoCatalogo } from '../../../components/EsqueletoCatalogo';
 import { LibroCard } from '../../../components/LibroCard';
 import { VistosRecientes } from '../../../components/VistosRecientes';
 import { espaciado, type Paleta } from '../../../constants/tema';
-import { useEstilos } from '../../../hooks/useEstilos';
 import { useBiblioteca } from '../../../context/BibliotecaProvider';
+import { useEstilos } from '../../../hooks/useEstilos';
 import { useLibros } from '../../../hooks/useLibros';
+import { useTema } from '../../../hooks/useTema';
 
 export default function CatalogoScreen() {
   const styles = useEstilos(crearEstilos);
+  const { paleta } = useTema();
   const { libros, cargando, error, reintentar } = useLibros();
   const { recientes } = useBiblioteca();
 
-  if (cargando) {
-    return <EstadoCargando />;
+  // el skeleton es solo para la primera carga; en un pull-to-refresh la lista queda y alcanza con el spinner
+  if (cargando && libros.length === 0) {
+    return <EsqueletoCatalogo />;
   }
 
   if (error) {
@@ -33,6 +36,15 @@ export default function CatalogoScreen() {
       keyExtractor={(l) => l.isbn}
       ListEmptyComponent={EstadoVacio}
       ItemSeparatorComponent={Separador}
+      refreshControl={
+        <RefreshControl
+          refreshing={cargando}
+          onRefresh={reintentar}
+          tintColor={paleta.primario}
+          colors={[paleta.primario]}
+          progressBackgroundColor={paleta.superficie}
+        />
+      }
       ListHeaderComponent={
         <View style={styles.header}>
           <View style={styles.acciones}>
@@ -42,9 +54,10 @@ export default function CatalogoScreen() {
           <VistosRecientes recientes={recientes} />
         </View>
       }
-      renderItem={({ item }) => (
+      renderItem={({ item, index }) => (
         <LibroCard
           libro={item}
+          indice={index}
           onPress={() => router.push({ pathname: '/libro/[isbn]', params: { isbn: item.isbn } })}
         />
       )}
