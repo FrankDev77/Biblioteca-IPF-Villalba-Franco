@@ -1,10 +1,20 @@
-import { createContext, useCallback, useContext, useReducer, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+  type ReactNode,
+} from 'react';
 
+import { EstadoCargando } from '../components/EstadoCargando';
 import { LIBROS } from '../data/libros';
 import { Cola } from '../estructuras/Cola';
 import { Pila } from '../estructuras/Pila';
 import { useRecordatorio } from '../hooks/useRecordatorio';
 import { sumarDias } from '../lib/fechas';
+import { CLAVES, guardar, leer } from '../lib/persistencia';
 import type { Prestamo, ReservaEnEspera, Sesion } from '../types';
 import type {
   BibliotecaContextValue,
@@ -50,12 +60,54 @@ export function BibliotecaProvider({ children }: Props) {
   // Cola propia y no un array con shift(): desencolar en el mostrador queda O(1)
   const [listasEspera] = useState(crearListasIniciales);
   // la Pila y las Colas se mutan en el lugar y React no se entera; el contador fuerza el re-render (B3)
-  const [, forzar] = useReducer((n: number) => n + 1, 0);
+  const [version, forzar] = useReducer((n: number) => n + 1, 0);
   const { programar, cancelar } = useRecordatorio();
   // la app solo modela al alumno ('yo'); para el resto alcanza con contar cuántos ejemplares
   // se llevaron por isbn, así ejemplaresDisponibles baja sin inventar un modelo de usuarios
   const [prestamosExternos, setPrestamosExternos] = useState<Record<string, number>>({});
   const [sesion, setSesion] = useState<Sesion | null>(null);
+  // hasta leer AsyncStorage no se pinta nada: si no, se ve un instante la app vacía
+  // y los efectos de guardado pisarían lo persistido con los valores iniciales
+  const [cargandoHidratacion, setCargandoHidratacion] = useState(true);
+
+  // las colas de espera no se persisten a propósito: son el seed de A2 y al reabrir
+  // la app la biblioteca arranca con las listas iniciales
+  useEffect(() => {
+    let cancelado = false;
+    Promise.all([
+      leer<Prestamo[]>(CLAVES.prestamos, []),
+      leer<string[]>(CLAVES.vistos, []),
+      leer<Record<string, number>>(CLAVES.prestamosExternos, {}),
+      leer<Sesion | null>(CLAVES.sesion, null),
+    ]).then(([prestamosGuardados, vistosGuardados, externosGuardados, sesionGuardada]) => {
+      if (cancelado) return;
+      vistosGuardados.forEach((isbn) => vistos.apilar(isbn));
+      setPrestamos(prestamosGuardados);
+      setPrestamosExternos(externosGuardados);
+      setSesion(sesionGuardada);
+      setCargandoHidratacion(false);
+    });
+    return () => {
+      cancelado = true;
+    };
+  }, [vistos]);
+
+  useEffect(() => {
+    if (!cargandoHidratacion) guardar(CLAVES.prestamos, prestamos).catch(noop);
+  }, [cargandoHidratacion, prestamos]);
+
+  useEffect(() => {
+    // la Pila no cambia de identidad al apilar; version es lo que avisa que hubo cambios
+    if (!cargandoHidratacion) guardar(CLAVES.vistos, vistos.aArray()).catch(noop);
+  }, [cargandoHidratacion, version, vistos]);
+
+  useEffect(() => {
+    if (!cargandoHidratacion) guardar(CLAVES.prestamosExternos, prestamosExternos).catch(noop);
+  }, [cargandoHidratacion, prestamosExternos]);
+
+  useEffect(() => {
+    if (!cargandoHidratacion) guardar(CLAVES.sesion, sesion).catch(noop);
+  }, [cargandoHidratacion, sesion]);
 
   const verLibro = useCallback(
     (isbn: string) => {
@@ -227,6 +279,10 @@ export function BibliotecaProvider({ children }: Props) {
     iniciarSesion,
     cerrarSesion,
   };
+
+  if (cargandoHidratacion) {
+    return <EstadoCargando texto="Iniciando…" />;
+  }
 
   return (
     <BibliotecaContext.Provider value={valor}>
