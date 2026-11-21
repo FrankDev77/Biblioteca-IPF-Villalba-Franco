@@ -1,7 +1,7 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 
-import { DetalleLibro } from '../../../components/DetalleLibro';
-import { EstadoError } from '../../../components/EstadoError';
+import { DetalleLibro } from '../../../../components/DetalleLibro';
+import { EstadoError } from '../../../../components/EstadoError';
 
 const ISBN_VALIDO = /^\d{13}$/;
 

@@ -1,15 +1,15 @@
 import { router } from 'expo-router';
 import { FlatList, StyleSheet, View } from 'react-native';
 
-import { BotonAccion } from '../../components/BotonAccion';
-import { EstadoCargando } from '../../components/EstadoCargando';
-import { EstadoError } from '../../components/EstadoError';
-import { EstadoVacio } from '../../components/EstadoVacio';
-import { LibroCard } from '../../components/LibroCard';
-import { VistosRecientes } from '../../components/VistosRecientes';
-import { colores, espaciado } from '../../constants/tema';
-import { useBiblioteca } from '../../context/BibliotecaProvider';
-import { useLibros } from '../../hooks/useLibros';
+import { BotonAccion } from '../../../components/BotonAccion';
+import { EstadoCargando } from '../../../components/EstadoCargando';
+import { EstadoError } from '../../../components/EstadoError';
+import { EstadoVacio } from '../../../components/EstadoVacio';
+import { LibroCard } from '../../../components/LibroCard';
+import { VistosRecientes } from '../../../components/VistosRecientes';
+import { colores, espaciado } from '../../../constants/tema';
+import { useBiblioteca } from '../../../context/BibliotecaProvider';
+import { useLibros } from '../../../hooks/useLibros';
 
 export default function CatalogoScreen() {
   const { libros, cargando, error, reintentar } = useLibros();
