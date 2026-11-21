@@ -7,6 +7,12 @@ export type ResultadoReserva =
 
 export type EstadoVencimiento = 'vigente' | 'por-vencer' | 'vencido';
 
+export type EstadoPermiso =
+  | { tipo: 'cargando' }
+  | { tipo: 'concedido' }
+  | { tipo: 'preguntable' }
+  | { tipo: 'bloqueado' };
+
 export type BibliotecaContextValue = {
   prestamos: Prestamo[];
   recientes: string[];
@@ -19,6 +25,7 @@ export type BibliotecaContextValue = {
   miPosicion: (isbn: string) => number | null;
   estaPrestado: (isbn: string) => boolean;
   misReservasEnEspera: () => ReservaEnEspera[];
+  activarRecordatorio: (isbn: string, activo: boolean) => Promise<void>;
   iniciarSesion: (usuario: string) => void;
   cerrarSesion: () => void;
 };

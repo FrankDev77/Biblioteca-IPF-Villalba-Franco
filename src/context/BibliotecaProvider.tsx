@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useReducer, useState, type Reac
 import { LIBROS } from '../data/libros';
 import { Cola } from '../estructuras/Cola';
 import { Pila } from '../estructuras/Pila';
+import { useRecordatorio } from '../hooks/useRecordatorio';
 import { sumarDias } from '../lib/fechas';
 import type { Prestamo, ReservaEnEspera } from '../types';
 import type { BibliotecaContextValue, ResultadoReserva } from '../types/biblioteca';
@@ -40,6 +41,7 @@ export function BibliotecaProvider({ children }: Props) {
   const [listasEspera] = useState(crearListasIniciales);
   // la Pila y las Colas se mutan en el lugar y React no se entera; el contador fuerza el re-render (B3)
   const [, forzar] = useReducer((n: number) => n + 1, 0);
+  const { programar, cancelar } = useRecordatorio();
 
   const verLibro = useCallback(
     (isbn: string) => {
@@ -115,10 +117,36 @@ export function BibliotecaProvider({ children }: Props) {
     [estaPrestado, miPosicion, ejemplaresDisponibles, listasEspera],
   );
 
-  const devolver = useCallback((isbn: string) => {
-    // si hay cola para este libro no se desencola aca, eso lo hace el mostrador (fase 6)
-    setPrestamos((actuales) => actuales.filter((p) => p.isbn !== isbn));
-  }, []);
+  const devolver = useCallback(
+    (isbn: string) => {
+      const prestamo = prestamos.find((p) => p.isbn === isbn);
+      if (prestamo) cancelar(prestamo.notificacionId).catch(noop);
+      // si hay cola para este libro no se desencola aca, eso lo hace el mostrador (fase 6)
+      setPrestamos((actuales) => actuales.filter((p) => p.isbn !== isbn));
+    },
+    [prestamos, cancelar],
+  );
+
+  const activarRecordatorio = useCallback(
+    async (isbn: string, activo: boolean) => {
+      const prestamo = prestamos.find((p) => p.isbn === isbn);
+      if (!prestamo) return;
+
+      let notificacionId: string | null = null;
+      if (activo) {
+        if (prestamo.notificacionId !== null) return;
+        const libro = LIBROS.find((l) => l.isbn === isbn);
+        notificacionId = await programar(isbn, libro?.titulo ?? isbn);
+      } else {
+        await cancelar(prestamo.notificacionId);
+      }
+
+      setPrestamos((actuales) =>
+        actuales.map((p) => (p.isbn === isbn ? { ...p, notificacionId } : p)),
+      );
+    },
+    [prestamos, programar, cancelar],
+  );
 
   const valor: BibliotecaContextValue = {
     prestamos,
@@ -132,6 +160,7 @@ export function BibliotecaProvider({ children }: Props) {
     miPosicion,
     estaPrestado,
     misReservasEnEspera,
+    activarRecordatorio,
     iniciarSesion: noop,
     cerrarSesion: noop,
   };
