@@ -2,14 +2,17 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
 import { EstadoError } from '../../components/EstadoError';
 import { espaciado, radios, tipografia, type Paleta } from '../../constants/tema';
-import { useEstilos } from '../../hooks/useEstilos';
-import { useTema } from '../../hooks/useTema';
 import { useBiblioteca } from '../../context/BibliotecaProvider';
 import { LIBROS } from '../../data/libros';
+import { useEstilos } from '../../hooks/useEstilos';
+import { useReducirMovimiento } from '../../hooks/useReducirMovimiento';
+import { useTema } from '../../hooks/useTema';
 import { formatearFecha } from '../../lib/fechas';
+import * as haptica from '../../lib/haptica';
 import type { ResultadoReserva } from '../../types/biblioteca';
 
 type Aviso = {
@@ -28,13 +31,33 @@ export default function ReservarScreen() {
   // se vuelve a correr para el mismo isbn (StrictMode o cambio de identidad de reservar)
   const reservado = useRef<string | null>(null);
 
+  const reducirMovimiento = useReducirMovimiento();
+  const escalaIcono = useSharedValue(0);
+
   const libro = LIBROS.find((l) => l.isbn === isbn);
 
   useEffect(() => {
     if (!libro || reservado.current === isbn) return;
     reservado.current = isbn;
-    setResultado(reservar(isbn));
+    const nuevo = reservar(isbn);
+    setResultado(nuevo);
+    if (!nuevo.ok) void haptica.error();
+    else if (nuevo.tipo === 'prestamo') void haptica.exito();
+    else void haptica.advertencia();
   }, [isbn, libro, reservar]);
+
+  useEffect(() => {
+    if (!resultado) return;
+    const esPrestamo = resultado.ok && resultado.tipo === 'prestamo';
+    if (!esPrestamo || reducirMovimiento) {
+      escalaIcono.set(1);
+      return;
+    }
+    escalaIcono.set(0);
+    escalaIcono.set(withSequence(withSpring(1.1), withSpring(1)));
+  }, [resultado, reducirMovimiento, escalaIcono]);
+
+  const estiloIcono = useAnimatedStyle(() => ({ transform: [{ scale: escalaIcono.get() }] }));
 
   if (!libro) {
     return (
@@ -82,13 +105,15 @@ export default function ReservarScreen() {
 
   return (
     <View style={styles.contenedor}>
-      <Ionicons
-        name={aviso.icono}
-        size={64}
-        color={aviso.color}
-        accessibilityElementsHidden
-        importantForAccessibility="no"
-      />
+      <Animated.View style={estiloIcono}>
+        <Ionicons
+          name={aviso.icono}
+          size={64}
+          color={aviso.color}
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+        />
+      </Animated.View>
       <Text style={styles.texto} accessibilityRole="header">
         {aviso.texto}
       </Text>

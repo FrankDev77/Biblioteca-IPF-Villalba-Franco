@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
 import { useTema } from '../hooks/useTema';
+import * as haptica from '../lib/haptica';
 
 type Props = {
   texto: string;
@@ -17,7 +18,10 @@ export function BotonAccion({ texto, icono, onPress }: Props) {
   const { paleta } = useTema();
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        void haptica.impactoLigero();
+        onPress();
+      }}
       accessibilityRole="button"
       accessibilityLabel={texto}
       style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}

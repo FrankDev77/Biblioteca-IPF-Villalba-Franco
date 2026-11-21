@@ -8,6 +8,7 @@ import { ItemMostrador } from '../components/ItemMostrador';
 import { espaciado, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
 import { useBiblioteca } from '../context/BibliotecaProvider';
+import * as haptica from '../lib/haptica';
 import { notificarLibroListo } from '../lib/notificaciones';
 import type { LibroConCola } from '../types/biblioteca';
 
@@ -24,6 +25,7 @@ export default function MostradorScreen() {
   const entregar = async (libro: LibroConCola) => {
     const resultado = entregarAlSiguiente(libro.isbn);
     if (!resultado) return;
+    void haptica.exito();
 
     if (!resultado.siguienteSoyYo) {
       Alert.alert('Entregado', `Libro entregado a ${resultado.entregado}`);

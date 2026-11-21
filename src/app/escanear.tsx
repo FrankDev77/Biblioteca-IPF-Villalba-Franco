@@ -11,6 +11,7 @@ import { MarcoEscaner } from '../components/MarcoEscaner';
 import { type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
 import { usePermiso } from '../hooks/usePermiso';
+import * as haptica from '../lib/haptica';
 import { buscarEnCatalogo } from '../lib/isbn';
 
 export default function EscanearScreen() {
@@ -45,6 +46,7 @@ export default function EscanearScreen() {
 
     const codigo = data.trim();
     if (buscarEnCatalogo(codigo)) {
+      void haptica.exito();
       abrirLibro(codigo);
       return;
     }
@@ -55,6 +57,7 @@ export default function EscanearScreen() {
       return;
     }
     ultimoDesconocido.current = codigo;
+    void haptica.error();
     Alert.alert('ISBN desconocido', 'Ese código no está en el catálogo.', [
       {
         text: 'OK',
