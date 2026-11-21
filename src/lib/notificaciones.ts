@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import { AndroidImportance } from 'expo-notifications';
 import { Platform } from 'react-native';
 
 export const CANAL_PRESTAMOS = 'prestamos';
@@ -19,7 +20,7 @@ export async function asegurarCanalPrestamos(): Promise<void> {
   if (existente) return;
   await Notifications.setNotificationChannelAsync(CANAL_PRESTAMOS, {
     name: 'Préstamos',
-    importance: Notifications.AndroidImportance.HIGH,
+    importance: AndroidImportance.HIGH,
   });
 }
 
