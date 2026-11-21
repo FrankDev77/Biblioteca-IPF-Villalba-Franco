@@ -1,14 +1,43 @@
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { espaciado, radios, tipografia, type Paleta } from '../constants/tema';
 import { useEstilos } from '../hooks/useEstilos';
+import { useReducirMovimiento } from '../hooks/useReducirMovimiento';
 
 const LADO_MARCO = 240;
 const LARGO_ESQUINA = 32;
 const GROSOR_ESQUINA = 4;
+const GROSOR_LASER = 2;
 
 export function MarcoEscaner() {
   const styles = useEstilos(crearEstilos);
+  const reducirMovimiento = useReducirMovimiento();
+  const posicion = useSharedValue(0.5);
+
+  useEffect(() => {
+    if (reducirMovimiento) {
+      cancelAnimation(posicion);
+      posicion.set(0.5);
+      return;
+    }
+    posicion.set(0);
+    // -1 repite para siempre y true invierte el sentido en cada vuelta: baja, sube, baja (yo-yo)
+    posicion.set(withRepeat(withTiming(1, { duration: 1800 }), -1, true));
+    return () => cancelAnimation(posicion);
+  }, [posicion, reducirMovimiento]);
+
+  const estiloLaser = useAnimatedStyle(() => ({
+    transform: [{ translateY: posicion.get() * (LADO_MARCO - GROSOR_LASER) }],
+  }));
+
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <View style={styles.aviso}>
@@ -17,6 +46,7 @@ export function MarcoEscaner() {
       </View>
       <View style={styles.centro}>
         <View style={styles.marco}>
+          <Animated.View style={[styles.laser, estiloLaser]} />
           <View style={[styles.esquina, styles.arribaIzquierda]} />
           <View style={[styles.esquina, styles.arribaDerecha]} />
           <View style={[styles.esquina, styles.abajoIzquierda]} />
@@ -60,6 +90,15 @@ const crearEstilos = (paleta: Paleta) =>
       width: LADO_MARCO,
       height: LADO_MARCO,
       borderRadius: radios.l,
+    },
+    laser: {
+      position: 'absolute',
+      top: 0,
+      left: GROSOR_ESQUINA,
+      right: GROSOR_ESQUINA,
+      height: GROSOR_LASER,
+      backgroundColor: paleta.primario,
+      opacity: 0.6,
     },
     esquina: {
       position: 'absolute',
