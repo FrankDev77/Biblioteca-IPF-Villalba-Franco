@@ -133,3 +133,21 @@ eas build --profile preview --platform android
 - Los préstamos de otras personas se cuentan en `prestamosExternos` (cantidad por ISBN) en lugar de duplicar el catálogo o inventar un modelo de usuarios; `ejemplaresDisponibles` se calcula al vuelo.
 - El estado de un permiso es un discriminated union (`cargando`, `concedido`, `preguntable`, `bloqueado`) que se consume con un `switch` exhaustivo.
 - El detalle se remonta con `key={isbn}`, así una respuesta del libro anterior no pisa al nuevo.
+
+## Verificación
+
+### `npx tsc --noEmit`
+Sin errores (la salida vacía indica éxito):
+
+​```
+$ npx tsc --noEmit
+$
+​```
+
+### `npx expo lint`
+Sin warnings ni reglas desactivadas (la salida vacía indica éxito):
+
+​```
+$ npx expo lint
+$
+​```
